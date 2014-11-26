@@ -22,18 +22,16 @@ endif
 
 function! ctrlp#todo#init(bufnr)
     let entries = []
-    for cmd in ['git grep -n -e TODO -e FIXME -e XXX | grep -e TODO -e FIXME -e XXX']
-        let lines = split(system(cmd), '\n')
-        if v:shell_error != 0 | continue | endif
-        let formatter = [':\s\+', ': ', 'g']
-        let [pat, str, flags] = [get(formatter, 0, ''), get(formatter, 1, ''), get(formatter, 2, '')]
-        syn match Comment /\/\/.*$/
-        syn match Directory /\w.*\.\w\+/
-        syn match Folded /\d\+/
-        for line in lines
-            "call add(entries, line)
-            call add(entries, substitute(line, pat, str, flags))
-        endfor
+    let lines = split(system('git grep -n -e TODO -e FIXME -e XXX | cat'), '\n')
+    if v:shell_error != 0 | continue | endif
+    let formatter = [':\s\+', ': ', 'g']
+    let [pat, str, flags] = [get(formatter, 0, ''), get(formatter, 1, ''), get(formatter, 2, '')]
+    syn match Comment /\/\/.*$/
+    syn match Directory /\w.*\.\w\+/
+    syn match Folded /\d\+/
+    for line in lines
+        "call add(entries, line)
+        call add(entries, substitute(line, pat, str, flags))
     endfor
     return entries
 endfunction
